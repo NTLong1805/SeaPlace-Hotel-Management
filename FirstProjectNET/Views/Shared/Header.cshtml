@@ -20,7 +20,14 @@
                         <p>Free: <a href="tel:+12 365 5233">+12 365 5233</a></p>
                     </div>
                 </div>
-            </div>
+                @if(Context.Session.GetString("Username") != null)
+                {
+                        <div class="media header-top-info">                            
+                            <div class="media-body">
+                                <span>Hello, @Context.Session.GetString("Username")</span>                              
+                            </div>
+                        </div>
+                }               
         </div>
     </div>
 </div>
@@ -55,14 +62,14 @@
                     <li class="nav-item"><a class="nav-link" asp-action = "Index" asp-controller="Contact">Contact</a></li>
                 </ul>
             </div>
-
-            <ul class="social-icons ml-auto">
-                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
-                <li><a href="#"><i class="fas fa-rss"></i></a></li>
-            </ul>
+            @if(Context.Session.GetString("Username") != null)
+            {                                   
+                  <a class="button button--active home-banner-btn mt-4" asp-action="Logout" asp-controller="Authentication">Logout</a>                   
+            }
+            else{
+                  <a class="button button--active home-banner-btn mt-4" asp-action="Auth" asp-controller="Authentication">Login</a>
+            }
+            
         </div>
     </nav>
 

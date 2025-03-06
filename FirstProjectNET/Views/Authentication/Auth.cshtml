@@ -1,0 +1,103 @@
+﻿@model FirstProjectNET.Models.ViewModel.AuthenticationViewModel
+@{
+	Layout = null;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+<link rel="stylesheet" href="~/TemplateLayout/Login/css/style.css" />
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form method="post" asp-action="SignUp" asp-controller="Authentication" novalidate>
+			<h1>Create Account</h1>
+			<div class="social-container">
+				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+			</div>
+			<span>or use your email for registration</span>
+			<input type="text" placeholder="Name" asp-for="SignUpUserName" />
+			<span asp-validation-for="SignUpUserName" class="text-danger"></span>
+			<input type="email" placeholder="Email" asp-for="SignUpEmail" id="SignUpEmail" />
+			<span asp-validation-for="SignUpEmail" class="text-danger"></span>
+			<input type="password" placeholder="Password" asp-for="SignUpPassword"/>
+			<span asp-validation-for="SignUpPassword" class="text-danger"></span>
+			<input type="password" placeholder="Confirm Password" asp-for="SignUpConfirmPassword"/>
+			<span asp-validation-for="SignUpConfirmPassword" class="text-danger"></span>
+			<button type="submit">Sign Up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form method="post" asp-action ="SignIn" asp-controller="Authentication">
+			<h1>Sign in</h1>
+			<div class="social-container">
+				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+			</div>
+			<span>or use your account</span>
+			<input type="email" placeholder="Email" asp-for="SignInEmail" />
+			<span asp-validation-for="SignInEmail" class="text-danger"></span>			
+			<input type="password" placeholder="Password" asp-for="SignInPassword"/>
+			<span asp-validation-for="SignInPassword" class="text-danger"></span>
+			@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+			{
+				<span class="alert alert-danger">@ViewBag.ErrorMessage</span>
+			}
+			<a href="#">Forgot your password?</a>
+			<button type="submit">Sign In</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer>
+	<p>
+		Created with <i class="fa fa-heart"></i> by
+		<a target="_blank" href="https://florin-pop.com">Florin Pop</a>
+		- Read how I created this and how you can join the challenge
+		<a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
+	</p>
+</footer>
+
+<script src="~/TemplateLayout/Login/js/JavaScript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$.validator.addMethod("emailExists", function (value, element) {
+			var isSuccess = false;
+			$.ajax({
+				url: "/Authentication/CheckEmailExists", // Gọi API kiểm tra email
+				type: "POST",
+				async: false, // Đảm bảo kết quả trả về ngay
+				data: { email: value },
+				success: function (response) {
+					isSuccess = response; // Nhận giá trị true/false từ server
+				}
+			});
+			return isSuccess; // Trả về kết quả kiểm tra
+		}, "Email Existed!");
+
+		// Áp dụng vào validation
+		$("#SignUpEmail").rules("add", {
+			emailExists: true
+		});
+	});
+</script>
+
+

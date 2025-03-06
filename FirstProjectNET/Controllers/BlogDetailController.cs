@@ -2,7 +2,7 @@
 
 namespace FirstProjectNET.Controllers
 {
-    public class Blog : Controller
+    public class BlogDetailController : Controller
     {
         public IActionResult Index()
         {
