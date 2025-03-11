@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using FirstProjectNET.Models;
 
 namespace FirstProjectNET.Data
@@ -19,7 +18,7 @@ namespace FirstProjectNET.Data
         public DbSet<RentForm> RentForms { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Image> Images { get; set; } = null!;
-        public DbSet<Service> Services { get; set; } = null!;
+        public DbSet<Services> Services { get; set; } = null!;
         public DbSet<Rate> Rates { get; set; } = null!;
         public DbSet<RoomService> RoomServices { get; set; } = null!;
         public DbSet<BookingDetail> BookingDetails { get; set; } = null!;
@@ -36,7 +35,7 @@ namespace FirstProjectNET.Data
             modelBuilder.Entity<RentForm>().ToTable(nameof(RentForm));
             modelBuilder.Entity<Category>().ToTable(nameof(Category));
             modelBuilder.Entity<Image>().ToTable(nameof(Image));
-            modelBuilder.Entity<Service>().ToTable(nameof(Service));
+            modelBuilder.Entity<Services>().ToTable(nameof(Service));
             modelBuilder.Entity<Rate>().ToTable(nameof(Rate));
             modelBuilder.Entity<RoomService>().ToTable(nameof(RoomService));
             modelBuilder.Entity<BookingDetail>().ToTable(nameof(BookingDetail));

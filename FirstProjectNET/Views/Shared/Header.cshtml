@@ -24,7 +24,7 @@
                 {
                         <div class="media header-top-info">                            
                             <div class="media-body">
-                                <span>Hello, @Context.Session.GetString("Username")</span>                              
+                                <span>Hello, @Context.Session.GetString("Username")</span>                                      
                             </div>
                         </div>
                 }               
@@ -47,7 +47,7 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
                 <ul class="nav navbar-nav menu_nav">
-                    <li class="nav-item active"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item active"><a class="nav-link" asp-action="Index" asp-controller="Home">Home</a></li>
                     <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="About">About</a></li>
                     <li class="nav-item"><a class="nav-link" asp-action="Index" asp-controller="Properties">Properties</a></li>
                     <li class="nav-item"><a class="nav-link" asp-action = "Index" asp-controller="Gallery">Gallery</a></li>
@@ -62,11 +62,16 @@
                     <li class="nav-item"><a class="nav-link" asp-action = "Index" asp-controller="Contact">Contact</a></li>
                 </ul>
             </div>
-            @if(Context.Session.GetString("Username") != null)
+            @if(Context.Session.GetString("Username") != null && Context.Session.GetString("Type") == "Admin")
             {                                   
-                  <a class="button button--active home-banner-btn mt-4" asp-action="Logout" asp-controller="Authentication">Logout</a>                   
+                  <a class="button button--active home-banner-btn mt-4" asp-action="Logout" asp-controller="Authentication">Logout</a>      
+                  <a class="button button--active home-banner-btn mt-4" asp-action="Index" asp-controller="HomeAdmin" asp-area="Admin">Admin</a>
             }
-            else{
+            else if(Context.Session.GetString("Username") != null && Context.Session.GetString("Type") == "Customer"){               
+                  <a class="button button--active home-banner-btn mt-4" asp-action="Logout" asp-controller="Authentication">Logout</a>     
+            }
+            else if(Context.Session.GetString("Username") == null)
+            {
                   <a class="button button--active home-banner-btn mt-4" asp-action="Auth" asp-controller="Authentication">Login</a>
             }
             

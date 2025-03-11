@@ -4,31 +4,42 @@ using Microsoft.EntityFrameworkCore;
 using FirstProjectNET.Models.ViewModel;
 using FirstProjectNET.Data;
 using FirstProjectNET.Models;
-using NuGet.Protocol;
 using FirstProjectNET.Models.Common;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net.WebSockets;
 
 namespace FirstProjectNET.Controllers
 {
     public class AuthenticationController : Controller
     {
         private readonly HotelDbContext _context;
+        
         public AuthenticationController(HotelDbContext context)
         {
             _context = context;
+            
         }
         [HttpGet]
-        public IActionResult Auth()
+        [AllowAnonymous]
+        public IActionResult Auth(string? ReturnUrl = null)
         {
-            if (HttpContext.Session.GetString("Username") == null)
+            ViewData["ReturnUrl"] = ReturnUrl;
+			
+			// kiểm tra xem đã có đăng nhập chưa
+			if (HttpContext.Session.GetString("Username") == null)
             {
-                return View();
+                return View(new AuthenticationViewModel());
             }
             else
             {
                 return RedirectToAction("Index", "Home");
-            }
+            }       
         }
 
         [HttpPost]
@@ -53,7 +64,7 @@ namespace FirstProjectNET.Controllers
 					Email = model.SignUpEmail,
 					Password = hashPassword,
 					Username = model.SignUpUserName,
-					Type = Models.Common.AccountType.Customer,
+					Type = Models.Common.AccountType.Admin,
 					Active = true,
 				};
 				_context.Accounts.Add(newAccount);
@@ -61,6 +72,7 @@ namespace FirstProjectNET.Controllers
 
 				//ViewBag.ErrorMessage = "Successful Sign Up";
 				HttpContext.Session.SetString("Username", model.SignUpUserName);
+                HttpContext.Session.SetString("Type", newAccount.Type.ToString());
 				return RedirectToAction("Index", "Home");
 			}
 			ViewBag.ErrorMessage = ErrorMessage;
@@ -77,7 +89,7 @@ namespace FirstProjectNET.Controllers
 		}
 
 		[HttpPost]
-        public IActionResult SignIn(AuthenticationViewModel model)
+        public async Task<IActionResult> SignIn(AuthenticationViewModel model,string? ReturnUrl)
         {
             model.IsRegister = false;
             ModelState.Remove("SignUpEmail");
@@ -85,6 +97,7 @@ namespace FirstProjectNET.Controllers
             ModelState.Remove("SignUpPassword");
             ModelState.Remove("SignUpConfirmPassword");
             string errorMessage = "";
+            
             if (ModelState.IsValid)
             {
                 if (HttpContext.Session.GetString("Username") == null)
@@ -93,19 +106,26 @@ namespace FirstProjectNET.Controllers
                     if (user == null)
                     {
 						ViewBag.ErrorMessage = "Account does not exists";
+                        ViewData["ReturnUrl"] = ReturnUrl;
                         return View("Auth",model);
                     }
                     string hashedPassword = HashPassword(model.SignInPassword);
                     if(user.Password != hashedPassword)
                     {
                         ViewBag.ErrorMessage = "Wrong Password";
-                        return View("Auth", model);
-                    }    
-                    if(user.Password == hashedPassword)
-                    {
-						HttpContext.Session.SetString("Username", user.Username);
-						return RedirectToAction("Index", "Home");
-					}    					
+						ViewData["ReturnUrl"] = ReturnUrl;
+						return View("Auth", model);
+                    }
+					
+					HttpContext.Session.SetString("Username", user.Username);                    
+                    HttpContext.Session.SetString("Type", user.Type.ToString());
+                    
+					if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+					{						
+						return Redirect(model.ReturnUrl);
+					}
+					return RedirectToAction("Index", "Home");		
+					
 				}
             }
             //ViewBag.ErrorMessage = errorMessage;
@@ -115,6 +135,7 @@ namespace FirstProjectNET.Controllers
         {
             HttpContext.Session.Clear();
             HttpContext.Session.Remove("Username");
+            HttpContext.SignOutAsync();
 
             return RedirectToAction("Index","Home");
         }
@@ -125,5 +146,55 @@ namespace FirstProjectNET.Controllers
             var emailExists = _context.Accounts.Any(x => x.Email == Email);
             return Json(!emailExists); // trả về true nếu email chưa tồn tại và ngược lại
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ExternalLogin(string provider,string returnUrl ="/")
+        {
+			//var redirectUrl = Url.Action("ExternalLoginCallback","Authentication",new {returnUrl});
+			var redirectUrl = Url.Action("ExternalLoginCallback", "Authentication", new { ReturnUrl = returnUrl });
+
+			var properties = new AuthenticationProperties { RedirectUri = redirectUrl};
+
+            return Challenge(properties, provider);
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl, string? remoteError)
+        {
+            returnUrl = returnUrl ?? Url.Content("~/");
+            if (remoteError != null)
+            {
+                return Content($"<script>alert('Error from external provider: {remoteError}'); window.close();</script>", "text/html");
+            }
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Content($"<script>alert('Error loading external login information.'); window.close();</script>", "text/html");
+            }
+            var email = authenticateResult.Principal.FindFirst(ClaimTypes.Email)?.Value;
+            var name = authenticateResult.Principal.FindFirst(ClaimTypes.Name)?.Value;
+            if(email == null)
+            {
+				return Content($"<script>alert('Email not received from Google.'); window.close();</script>", "text/html");
+			}    
+            var account = _context.Accounts.FirstOrDefault(x => x.Email == email);            
+            if (account == null)
+            {
+                account = new Account
+                {
+                    Email = email,
+                    Username = authenticateResult.Principal.FindFirst(ClaimTypes.GivenName).Value + " " + authenticateResult.Principal.FindFirst(ClaimTypes.Surname).Value,
+                    Password = HashPassword("12345678"),
+                    Type = AccountType.Customer,
+                    Active = true
+                };
+                _context.Accounts.Add(account);
+                _context.SaveChanges();
+            }
+            HttpContext.Session.SetString("Username", account.Username);
+            HttpContext.Session.SetString("Type",account.Type.ToString());
+
+			return Content($"<script>window.opener.location.href = '{returnUrl}'; window.close();</script>", "text/html");
+		}
+        
     }
 }

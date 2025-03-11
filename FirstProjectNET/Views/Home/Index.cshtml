@@ -1,5 +1,39 @@
 ﻿
+@{
+    ViewData["Title"] = "Home";
+}
+<style>
+    .check-date {
+        position: relative;
+        margin-bottom: 15px;
+    }
 
+        .check-date label {
+            font-size: 14px;
+            color: #707079;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .check-date input {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #ebebeb;
+            border-radius: 2px;
+            font-size: 16px;
+            color: #19191a;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding-left: 20px;
+        }
+
+        .check-date i {
+            color: #dfa974;
+            position: absolute;
+            right: 18px;
+            bottom: 17px;
+        }
+</style>
 <!-- ================ start banner area ================= -->
 <section class="home-banner-area" id="home">
     <div class="container h-100">
@@ -7,89 +41,48 @@
             <div class="text-center">
                 <h4>See What a Difference a stay makes</h4>
                 <h1>Luxury <em>is</em> personal</h1>
-                <a class="button home-banner-btn" href="#">Book Now</a>
+                <a class="button home-banner-btn" asp-action="Index" asp-controller="Room">Book Now</a>
             </div>
         </div>
     </div>
 </section>
 <!-- ================ end banner area ================= -->
 <!-- ================ start banner form ================= -->
-<form class="form-search form-search-position">
+<form class="form-search form-search-position" asp-controller="Properties" asp-action="RoomAvailable" id = "bookingForm">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 gutters-19">
-                <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Enter your keywords.." required>
-                </div>
+            <div class="col-lg-6 gutters-19 check-date">
+                <label>Check In:</label>
+                <input type="date" name="dateCome" id= "checkIn" required/>              
             </div>
-            <div class="col-lg-6 gutters-19">
-                <div class="row">
+            <div class="col-lg-6 gutters-19 check-date">
+                <label>Check Out:</label>
+                <input type="date" name="dateGo" id= "checkOut" required />
+            </div>
+                <div class="col-lg-6 gutters-19 check-date">              
                     <div class="col-sm">
                         <div class="form-group">
                             <div class="form-select-custom">
                                 <select name="" id="">
-                                    <option value="" disabled selected>Arrival</option>
-                                    <option value="8 AM">8 AM</option>
-                                    <option value="12 PM">12 PM</option>
+                                    <option value="" disabled selected>Number of People</option>
+                                    @for(int k = 1;k <= 4;k++)
+                                    {
+                                        <option value="" >@k</option>
+                                    }
                                 </select>
-                            </div>
+                            </div>                         
                         </div>
-                    </div>
-                    <div class="col-sm gutters-19">
-                        <div class="form-group">
-                            <div class="form-select-custom">
-                                <select name="" id="">
-                                    <option value="" disabled selected>Number of room</option>
-                                    <option value="8 AM">8 AM</option>
-                                    <option value="12 PM">12 PM</option>
-                                </select>
-                            </div>
-                        </div>
+                    </div>                    
+                </div>
+            <div class="col-lg-6 gutters-19" style="margin-top:20px">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <button class="button button-form">Check Avaibility</button>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Departure</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Adult</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Child</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 gutters-19">
-                <div class="form-group">
-                    <button class="button button-form" type="submit">Check Availability</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </form>
 <!-- ================ end banner form ================= -->
 <!-- ================ welcome section start ================= -->
@@ -138,47 +131,28 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore1.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$150.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Classic Bed Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore2.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$170.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Premium Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
+            @{
+                int i = 0;
+            }
+            @foreach(var room in ViewBag.Rooms)
+            {
+                i++;
+                string category = (room.CategoryID.ToString().Substring(0,room.CategoryID.ToString().Length -2));
+                string price = string.Format("{0:N0} VND",room.Price);
+                <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
+                    <div class="card card-explore">
+                        <div class="card-explore__img">
+                            <img class="card-img" src="/TemplateLayout/Page/img/room/room-b@(i).jpg" alt="">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-explore__price">@price<sub>/ Per Night</sub></h3>
+                            <h4 class="card-explore__title"><a href="#">@category</a></h4>
+                            <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>                            
+                            <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore3.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$190.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Family Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
+            }           
         </div>
     </div>
 </section>
@@ -208,49 +182,23 @@
         <div class="special-img mb-30px">
             <img class="img-fluid" src="~/TemplateLayout/Page/img/home/special.png" alt="">
         </div>
-
         <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-special">
-                    <div class="media align-items-center mb-1">
-                        <span class="card-special__icon"><i class="ti-home"></i></span>
-                        <div class="media-body">
-                            <h4 class="card-special__title">Conference Room</h4>
+            @foreach(var service in ViewBag.Services)
+            {
+                <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
+                    <div class="card card-special">
+                        <div class="media align-items-center mb-1">
+                            <span class="card-special__icon"><i class="ti-home"></i></span>
+                            <div class="media-body">
+                                <h4 class="card-special__title">@service.ServiceName</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>@service.Description</p>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <p>Built purse maids cease her ham new seven among and. Pulled coming wooded tended it answer remain</p>
-                    </div>
                 </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-special">
-                    <div class="media align-items-center mb-1">
-                        <span class="card-special__icon"><i class="ti-bell"></i></span>
-                        <div class="media-body">
-                            <h4 class="card-special__title">Swimming Pool</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>Built purse maids cease her ham new seven among and. Pulled coming wooded tended it answer remain</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                <div class="card card-special">
-                    <div class="media align-items-center mb-1">
-                        <span class="card-special__icon"><i class="ti-car"></i></span>
-                        <div class="media-body">
-                            <h4 class="card-special__title">Sports Culb</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>Built purse maids cease her ham new seven among and. Pulled coming wooded tended it answer remain</p>
-                    </div>
-                </div>
-            </div>
+            }           
         </div>
     </div>
 </section>
@@ -265,125 +213,28 @@
             <h2>Our Guest Love Us</h2>
         </div>
         <div class="owl-carousel owl-theme testi-carousel">
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial1.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>Robert Mack</h3>
-                            <p>CEO & Founder</p>
+            @{
+                int j = 0;
+            }
+           @foreach(var rate in ViewBag.Rates)
+            {
+                j++;
+                <div class="testi-carousel__item">
+                    <div class="media">
+                        <div class="testi-carousel__img">
+                            <img src="~/TemplateLayout/Page/img/home/testimonial@(j).png" alt="">
+                        </div>
+                        <div class="media-body">
+                            <p>@rate.Message</p>
+                            <div class="testi-carousel__intro">
+                                <h3>@rate.Username</h3>
+                                <p>@rate.DateCreate</p>
+                                <p>@rate.Point</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial2.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>David Alone</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial3.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>Adam Pallin</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial1.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>Robert Mack</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial2.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>David Alone</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial3.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>Adam Pallin</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial1.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>Robert Mack</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testi-carousel__item">
-                <div class="media">
-                    <div class="testi-carousel__img">
-                        <img src="~/TemplateLayout/Page/img/home/testimonial2.png" alt="">
-                    </div>
-                    <div class="media-body">
-                        <p>Incidunt deleniti blanditiis quas aperiam recusandae consillo ullam quibusdam cum libero illo repell endus!</p>
-                        <div class="testi-carousel__intro">
-                            <h3>David Alone</h3>
-                            <p>CEO & Founder</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }            
         </div>
     </div>
 </section>
@@ -452,3 +303,39 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkInInput = document.getElementById("checkIn");
+        const checkOutInput = document.getElementById("checkOut");
+        const form = document.getElementById("bookingForm");
+
+        
+        const today = new Date().toISOString().split("T")[0];
+        checkInInput.setAttribute("min", today);
+
+        checkInInput.addEventListener("change", function () {
+            if (checkInInput.value < today) {
+                alert("Check-in date is not validated");
+                checkInInput.value = today;
+            }
+
+            
+            checkOutInput.setAttribute("min", checkInInput.value);
+        });
+
+        checkOutInput.addEventListener("change", function () {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date ");
+                checkOutInput.value = "";
+            }
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date");
+                event.preventDefault(); // Ngăn form submit nếu có lỗi
+            }
+        });
+    });
+</script>

@@ -1,4 +1,9 @@
-﻿using FirstProjectNET.Data;
+﻿
+using FirstProjectNET.Data;
+using FirstProjectNET.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -19,6 +24,24 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
+{
+    options.LoginPath = "/Authentication/Auth";
+})
+.AddGoogle(options =>
+{
+   options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+   options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+})
+.AddFacebook(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Facebook:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"];
+});
+
+builder.Services.AddScoped<EmailService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,13 +55,24 @@ using(var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     DbInitializer.Initialize(services);
-}    
+}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseAuthorization();
 app.UseSession();
+app.UseAuthorization();
+app.UseAuthentication();
+
+
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
 
 app.MapControllerRoute(
     name: "default",

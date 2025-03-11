@@ -105,8 +105,8 @@ namespace FirstProjectNET.Data
 
 			var accounts = new Account[]
 			{
-				new Account { Username = "admin", Password = passwordHasher.HashPassword(null, "123"), Type = AccountType.Admin, Active = true },
-				new Account { Username = "admin2", Password = passwordHasher.HashPassword(null, "123"), Type = AccountType.Admin, Active = false },
+				new Account { Username = "admin", Password = passwordHasher.HashPassword(null, "123"), Type = AccountType.Admin, Active = true ,Email = "hellong@gmail.com"},
+				new Account { Username = "admin2", Password = passwordHasher.HashPassword(null, "123"), Type = AccountType.Admin, Active = false,Email = "hellong@gmail.com" },
 			};
 
 			return accounts;
@@ -347,15 +347,15 @@ namespace FirstProjectNET.Data
 		/// Service
 		/// </summary>
 		/// <returns></returns>
-		private static Service[] InitService()
+		private static Services[] InitService()
 		{
-			var services = new Service[]
+			var services = new Services[]
 			{
-				new Service { ServiceID = "S0001", ServiceName = "Food and Baverage",	Price = 500000 },
-				new Service { ServiceID = "S0002", ServiceName = "Wifi",				Price = 0 },
-				new Service { ServiceID = "S0003", ServiceName = "Television",			Price = 0 },
-				new Service { ServiceID = "S0004", ServiceName = "Air conditioner",		Price = 0 },
-				new Service { ServiceID = "S0005", ServiceName = "Laundry",				Price = 100000 },
+				new Services { ServiceID = "S0001", ServiceName = "Food and Baverage",	Price = 500000 },
+				new Services { ServiceID = "S0002", ServiceName = "Wifi",				Price = 0 },
+				new Services { ServiceID = "S0003", ServiceName = "Television",			Price = 0 },
+				new Services { ServiceID = "S0004", ServiceName = "Air conditioner",		Price = 0 },
+				new Services { ServiceID = "S0005", ServiceName = "Laundry",				Price = 100000 },
 			};
 
 			return services;

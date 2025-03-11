@@ -8,6 +8,7 @@
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form method="post" asp-action="SignUp" asp-controller="Authentication" novalidate>
+			<input type="hidden" asp-for="ReturnUrl" />
 			<h1>Create Account</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -28,10 +29,19 @@
 	</div>
 	<div class="form-container sign-in-container">
 		<form method="post" asp-action ="SignIn" asp-controller="Authentication">
+			<input type="hidden" asp-for="ReturnUrl" />
 			<h1>Sign in</h1>
 			<div class="social-container">
-				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="javascript:void(0)" class="social external-login-btn"
+				data-provider = "Facebook"
+				data-url = "@Url.Action("ExternalLogin","Authentication", new {provider = "Facebook",ReturnUrl = Model.ReturnUrl})">
+				<i class="fab fa-facebook-f"></i>
+				</a>
+				<a href="javascript:void(0)" class="social external-login-btn"
+				   data-provider="Google"
+				   data-url="@Url.Action("ExternalLogin", "Authentication", new { provider = "Google", ReturnUrl = Model.ReturnUrl })">
+				   <i class="fab fa-google-plus-g"></i>
+				</a>
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
@@ -79,25 +89,67 @@
 
 <script>
 	$(document).ready(function () {
+		// Thêm phương thức kiểm tra email tồn tại
 		$.validator.addMethod("emailExists", function (value, element) {
 			var isSuccess = false;
 			$.ajax({
-				url: "/Authentication/CheckEmailExists", // Gọi API kiểm tra email
+				url: "/Authentication/CheckEmailExists", // API kiểm tra email
 				type: "POST",
-				async: false, // Đảm bảo kết quả trả về ngay
+				dataType: "json",
+				async: false, // Đảm bảo nhận kết quả trước khi tiếp tục
 				data: { email: value },
 				success: function (response) {
-					isSuccess = response; // Nhận giá trị true/false từ server
+					isSuccess = response.exists; // Đọc giá trị đúng từ JSON trả về
+				},
+				error: function () {
+					console.error("Lỗi khi gọi API kiểm tra email.");
 				}
 			});
-			return isSuccess; // Trả về kết quả kiểm tra
-		}, "Email Existed!");
+			return !isSuccess; // Nếu email đã tồn tại, trả về false (không hợp lệ)
+		}, "Email đã tồn tại!");
 
-		// Áp dụng vào validation
+		// Áp dụng kiểm tra vào input email đăng ký
 		$("#SignUpEmail").rules("add", {
 			emailExists: true
 		});
 	});
+
+	document.addEventListener("DOMContentLoaded", function () {
+		document.querySelectorAll('.external-login-btn').forEach(button => {
+			button.addEventListener('click', function (event) {
+				event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>
+
+				var provider = this.getAttribute('data-provider');
+				var url = this.getAttribute('data-url');
+
+				if (!url) {
+					console.error("URL đăng nhập không hợp lệ!");
+					return;
+				}
+
+				var width = 500, height = 600;
+				var left = (window.innerWidth / 2) - (width / 2);
+				var top = (window.innerHeight / 2) - (height / 2);
+
+				// Mở cửa sổ popup đăng nhập Google/Facebook
+				var popup = window.open(url, provider, `width=${width},height=${height},top=${top},left=${left},resizable=yes`);
+
+				if (!popup) {
+					alert("Trình duyệt đã chặn popup. Vui lòng cho phép popup để tiếp tục.");
+					return;
+				}
+
+				// Kiểm tra nếu popup bị đóng thì reload trang
+				var checkPopup = setInterval(function () {
+					if (popup.closed) {
+						clearInterval(checkPopup);
+						location.reload();
+					}
+				}, 500);
+			});
+		});
+	});
 </script>
+
 
 

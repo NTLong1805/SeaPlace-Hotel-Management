@@ -15,8 +15,9 @@
     <link rel="stylesheet" href="~/TemplateLayout/Page/vendors/owl-carousel/owl.theme.default.min.css">
     <link rel="stylesheet" href="~/TemplateLayout/Page/vendors/owl-carousel/owl.carousel.min.css">
     <link rel="stylesheet" href="~/TemplateLayout/Page/vendors/nice-select/nice-select.css">
-
     <link rel="stylesheet" href="~/TemplateLayout/Page/css/style.css">
+   
+    @RenderSection("Styles",required:false)
 </head>
 <body>
     <!-- ================ header section start ================= -->  
@@ -30,7 +31,7 @@
     <!-- ================ End footer Area ================= -->
 
 
-
+    
     <script src="~/TemplateLayout/Page/vendors/jquery/jquery-3.2.1.min.js"></script>
     <script src="~/TemplateLayout/Page/vendors/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="~/TemplateLayout/Page/vendors/magnefic-popup/jquery.magnific-popup.min.js"></script>
@@ -41,5 +42,11 @@
     <script src="~/TemplateLayout/Page/vendors/jquery.ajaxchimp.min.js"></script>
     <script src="~/TemplateLayout/Page/vendors/mail-script.js"></script>
     <script src="~/TemplateLayout/Page/js/main.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".form-search").attr("method", "get");
+        });
+    </script>
+    @RenderSection("Scripts",required:false)
 </body>
 </html>

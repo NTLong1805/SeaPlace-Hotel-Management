@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
 
 namespace FirstProjectNET.Models.ViewModel
 {
@@ -27,6 +28,10 @@ namespace FirstProjectNET.Models.ViewModel
 		public string SignUpConfirmPassword {  get; set; }
 
 		public bool IsRegister {  get; set; }
+
+		public string? ReturnUrl {  get; set; }
+
+		public IList<AuthenticationScheme>? ExternalLogins { get; set; }
 
 
 	}

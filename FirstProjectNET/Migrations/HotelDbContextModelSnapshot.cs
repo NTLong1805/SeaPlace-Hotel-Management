@@ -362,6 +362,10 @@ namespace FirstProjectNET.Migrations
                     b.Property<string>("ServiceID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 

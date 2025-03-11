@@ -1,4 +1,36 @@
-﻿<section class="contact-banner-area" id="contact">
+﻿@{
+    ViewData["Title"] = "Properties";
+}
+<style>
+    .check-date{
+        position:relative;
+        margin-bottom:15px;
+    }
+    .check-date label{
+            font-size: 14px;
+            color: #707079;
+            display: block;
+            margin-bottom: 10px;
+    }
+    .check-date input{
+            width: 100%;
+            height: 50px;
+            border: 1px solid #ebebeb;
+            border-radius: 2px;
+            font-size: 16px;
+            color: #19191a;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding-left: 20px;
+    }
+    .check-date i{
+            color: #dfa974;
+            position: absolute;
+            right: 18px;
+            bottom: 17px;
+    }
+    </style>
+<section class="contact-banner-area" id="contact">
     <div class="container h-100">
         <div class="contact-banner">
             <div class="text-center">
@@ -15,84 +47,41 @@
 </section>
 <!-- ================ end banner area ================= -->
 <!-- ================ start banner form ================= -->
-<form class="form-search form-search-position accomodation">
+<form class="form-search form-search-position" action="/Properties/RoomAvailable" method="get" id= "bookingForm">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 gutters-19">
-                <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Enter your keywords.." required>
-                </div>
+            <div class="col-lg-6 gutters-19 check-date">
+                <label for="date-in">Check In:</label>
+                <input type="date" name="dateCome" id="checkIn" required />
+            </div>
+            <div class="col-lg-6 gutters-19 check-date">
+                <label for="date-out">Check Out:</label>
+                <input type="date" name="dateGo" id="checkOut" required />
             </div>
             <div class="col-lg-6 gutters-19">
-                <div class="row">
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <div class="form-select-custom">
-                                <select name="" id="">
-                                    <option value="" disabled selected>Arrival</option>
-                                    <option value="8 AM">8 AM</option>
-                                    <option value="12 PM">12 PM</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm gutters-19">
-                        <div class="form-group">
-                            <div class="form-select-custom">
-                                <select name="" id="">
-                                    <option value="" disabled selected>Number of room</option>
-                                    <option value="8 AM">8 AM</option>
-                                    <option value="12 PM">12 PM</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Departure</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
+                <div class="col-sm">
+                    <div class="form-group">
+                        <select name="numPeople" id="numPeople" required>
+                            <option value="" disabled selected>Number of People</option>
+                            @for (int k = 1; k <= 4; k++)
+                            {
+                                <option value="@k">@k</option>
+                            }
                         </select>
+
                     </div>
                 </div>
             </div>
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Adult</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
-                        </select>
+            <div class="col-lg-6 gutters-19" style="margin-top:20px">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <button class="button button-form" type="submit">Check Avaibility</button>
                     </div>
-                </div>
-            </div>
-            <div class="col-sm gutters-19">
-                <div class="form-group">
-                    <div class="form-select-custom">
-                        <select name="" id="">
-                            <option value="" disabled selected>Child</option>
-                            <option value="8 AM">8 AM</option>
-                            <option value="12 PM">12 PM</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 gutters-19">
-                <div class="form-group">
-                    <button class="button button-form" type="submit">Check Availability</button>
                 </div>
             </div>
         </div>
     </div>
-</form>
-<!-- ================ end banner form ================= -->
+</form><!-- ================ end banner form ================= -->
 <!-- ================ Explore section start ================= -->
 <section class="section-margin section-margin--small">
     <div class="container">
@@ -104,89 +93,100 @@
         </div>
 
         <div class="row pb-4">
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore1.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$150.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Classic Bed Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
+            @{
+                int i = 0;
+            }
+            @foreach(var category in ViewBag.Categories)
+            {
+                i++;
+                int capacity = int.Parse(category.CategoryID.ToString().Substring(category.CategoryID.ToString().Length - 2));
+                string price = string.Format("{0:N0} VND", category.Price);
+                <div class="col-md-6 col-xl-4 mb-5">
+                    <div class="card card-explore">
+                        <div class="card-explore__img">
+                            <img class="card-img" src="~/TemplateLayout/Page/img/room/room-@(i).jpg" alt="">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-explore__price">@price <sub>/ Per Night</sub></h3>
+                            <h4 class="card-explore__title"><a href="#">@category.TypeName</a></h4>
+                            <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
+                            <h4 class="card-explore__title">Capacity: @capacity</h4>
+                            <a class="card-explore__link" asp-action="Details" asp-controller="Properties" asp-route-id="@category.CategoryID">More Details <i class="ti-arrow-right"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }            
+        </div>
+        <!-- Phân Trang -->
+        <div class="row">
+            <div class="col-md-12">
+                @{
+                    int prevPage = ViewBag.Page - 1;
+                    if (prevPage <= 0)
+                    {
+                        prevPage = 1;
+                    }
+                    int nextPage = ViewBag.Page + 1;
+                    if (nextPage > ViewBag.NoOfPages)
+                    {
+                        nextPage = ViewBag.NoOfPages;
 
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore2.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$170.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Premium Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore3.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$190.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Family Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore4.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$120.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Single Bed Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore5.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$130.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Classic Bed Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-xl-4 mb-5">
-                <div class="card card-explore">
-                    <div class="card-explore__img">
-                        <img class="card-img" src="~/TemplateLayout/Page/img/home/explore6.png" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-explore__price">$150.00 <sub>/ Per Night</sub></h3>
-                        <h4 class="card-explore__title"><a href="#">Family Room</a></h4>
-                        <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>
-                        <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                    </div>
-                </div>
+                    }
+                }
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link @(ViewBag.Page == 1 ? "disabled" : "")" href="/properties/index?page=@prevPage" style="color:rgb(223, 169, 116)">
+                            Prev
+                        </a>
+                    </li>
+                    @for (int j = 1; j <= ViewBag.NoOfPages; j++)
+                    {
+                        <li class="page-item @(j == ViewBag.Page)">
+                            <a class="page-link" href="/properties/index?page=@j" style=" color:rgb(223, 169, 116)">@j</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link @(ViewBag.Page == ViewBag.NoOfPages ? "disabled" : "")" href="/properties/index?page=@nextPage" style="color:rgb(223, 169, 116)">
+                            Next
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkInInput = document.getElementById("checkIn");
+        const checkOutInput = document.getElementById("checkOut");
+        const form = document.getElementById("bookingForm");
+
+
+        const today = new Date().toISOString().split("T")[0];
+        checkInInput.setAttribute("min", today);
+
+        checkInInput.addEventListener("change", function () {
+            if (checkInInput.value < today) {
+                alert("Check-in date is not validated");
+                checkInInput.value = today;
+            }
+
+
+            checkOutInput.setAttribute("min", checkInInput.value);
+        });
+
+        checkOutInput.addEventListener("change", function () {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date ");
+                checkOutInput.value = "";
+            }
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date");
+                event.preventDefault(); // Ngăn form submit nếu có lỗi
+            }
+        });
+    });
+</script>
