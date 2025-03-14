@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FirstProjectNET.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Route("Admin")]
 	[Route("Admin/Homeadmin")]
+	
 	public class HomeAdminController : Controller
 	{
 		[Route("")]

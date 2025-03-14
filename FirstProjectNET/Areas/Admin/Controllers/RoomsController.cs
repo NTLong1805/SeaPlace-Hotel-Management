@@ -28,7 +28,7 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                                 .Include(i => i.Images)
                                 .AsQueryable();
 
-            // Lưu giá trị của CategoryID và Status đã chọn vào ViewBag
+            
             ViewBag.SelectedCategoryID = CategoryID;
             ViewBag.SelectedStatus = Status;
 

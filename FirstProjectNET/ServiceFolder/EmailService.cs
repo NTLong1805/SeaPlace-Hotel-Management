@@ -16,10 +16,7 @@ namespace FirstProjectNET.Service
         }
             public async Task SendBookingConfirmationEmail(string toEmail,string customerName,RentForm form)
             {
-			    var emailSettings = _configuration.GetSection("EmailSettings");
-
-
-                
+			    var emailSettings = _configuration.GetSection("EmailSettings");     
 			    var email = new MimeMessage();
                 email.From.Add(new MailboxAddress(emailSettings["FromName"], emailSettings["FromEmail"]));
                 email.To.Add(new MailboxAddress(customerName, toEmail));
@@ -52,7 +49,8 @@ namespace FirstProjectNET.Service
 			{
 				Console.WriteLine("Lỗi khi gửi email: " + ex.Message);
 			}
-
 		}
+
+        
 	}
 }

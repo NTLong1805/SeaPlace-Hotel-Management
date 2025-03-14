@@ -42,6 +42,8 @@ namespace	FirstProjectNET.Models
 
 		public Membership Membership { get; set; }
 
+		public virtual Image Image { get; set; }
+
 		// Navigation properties
 		public virtual Account? Account { get; set; }		
 		public ICollection<Booking> Bookings { get; set; }

@@ -1,6 +1,7 @@
 ﻿using FirstProjectNET.Data;
 using FirstProjectNET.Models;
 using FirstProjectNET.Models.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace FirstProjectNET.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Route("Account")]
+	[Authorize]
 	public class AccountController : Controller
 	{
 		private HotelDbContext db;
@@ -147,7 +149,7 @@ namespace FirstProjectNET.Areas.Admin.Controllers
 		[Route("AccessDenied")]
         public IActionResult AccessDenied()
         {
-            return View();
+            return View();	
         }
     }
 }

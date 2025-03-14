@@ -4,6 +4,7 @@ using FirstProjectNET.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FirstProjectNET.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312033159_addcolumnimagetoCustomer")]
+    partial class addcolumnimagetoCustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,23 +55,6 @@ namespace FirstProjectNET.Migrations
                     b.HasKey("AccountID");
 
                     b.ToTable("Account", (string)null);
-                });
-
-            modelBuilder.Entity("FirstProjectNET.Models.AccountLogin", b =>
-                {
-                    b.Property<int>("AccountID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProviderKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AccountID", "LoginProvider");
-
-                    b.ToTable("AccountLogin", (string)null);
                 });
 
             modelBuilder.Entity("FirstProjectNET.Models.Booking", b =>
@@ -446,17 +432,6 @@ namespace FirstProjectNET.Migrations
                     b.ToTable("Staff", (string)null);
                 });
 
-            modelBuilder.Entity("FirstProjectNET.Models.AccountLogin", b =>
-                {
-                    b.HasOne("FirstProjectNET.Models.Account", "Account")
-                        .WithMany("Logins")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("FirstProjectNET.Models.Booking", b =>
                 {
                     b.HasOne("FirstProjectNET.Models.Customer", "Customer")
@@ -610,8 +585,6 @@ namespace FirstProjectNET.Migrations
             modelBuilder.Entity("FirstProjectNET.Models.Account", b =>
                 {
                     b.Navigation("Customers");
-
-                    b.Navigation("Logins");
 
                     b.Navigation("Staff");
                 });

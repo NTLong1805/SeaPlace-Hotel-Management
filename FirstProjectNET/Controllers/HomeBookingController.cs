@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FirstProjectNET.Service;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FirstProjectNET.Controllers
 {
+	
 	public class HomeBookingController : Controller
 	{
 		private HotelDbContext db;
@@ -20,12 +22,14 @@ namespace FirstProjectNET.Controllers
 			_emailService = emailService;
 		}
 
-		public IActionResult Index(string categoryId, string roomId, DateTime dateCome, DateTime dateGo, int numPeople)
+        
+
+        public IActionResult Index(string categoryId, string roomId, DateTime dateCome, DateTime dateGo, int numPeople)
 		{
 			if (categoryId != null)
 			{
 				var category = db.Categories.Where(c => c.CategoryID == categoryId).Include(c => c.Rooms).FirstOrDefault();
-				ViewBag.Rooms = new SelectList(category.Rooms.Where(r => r.Status == "Vacant").ToList(), "RoomID", "RoomID6");
+				ViewBag.Rooms = new SelectList(category.Rooms.Where(r => r.Status == "Vacant").ToList(), "RoomID", "RoomID");
 				ViewBag.Category = db.Categories.Where(c => c.CategoryID == categoryId).FirstOrDefault();
 			}
 			if (roomId != null)
@@ -54,7 +58,7 @@ namespace FirstProjectNET.Controllers
 		public async Task<IActionResult> Book(string rid, BookingViewModel model)
 		{
 			var rooms = db.Rooms.Include(r => r.Category).ToList();
-			Room room = null;
+            Room room = null;
 			if (rid != null)
 			{
 				room = rooms.FirstOrDefault(r => r.RoomID == rid);
@@ -65,7 +69,7 @@ namespace FirstProjectNET.Controllers
 			// Generate Customer ID
 			string customerID = "";
 			string bookingID = "";
-			string rentFormID = GenerateID("RF");
+            string rentFormID = GenerateID("RF");
 
 			while (true)
 			{
@@ -87,17 +91,17 @@ namespace FirstProjectNET.Controllers
 				{
 					model.Booking.BookingID = bookingID;
 
-					// Remove state 
-					ModelState.Remove("Booking.BookingID");
+                    // Remove state 
+                    ModelState.Remove("Booking.BookingID");
 					break;
 				}
 			}
 
-			// Check valid 
+            // Check valid 
 			if (ModelState.IsValid)
-			{
-				try
-				{
+            {
+                try
+                {
 					db.Add(new Booking
 					{
 						BookingID = bookingID,
@@ -107,41 +111,41 @@ namespace FirstProjectNET.Controllers
 						NumberPeople = model.Booking.NumberPeople,
 					});
 					db.Add(new BookingDetail
-					{
-						BookingID = bookingID,
-						CategoryID = room.CategoryID,
-						NumberRoom = 1
-					});
-					db.Add(new RentForm
-					{
-						RentFormID = rentFormID,
-						BookingID = bookingID,
-						StaffID = "S0001",
-						RoomID = rid,
-						CustomerID = customerID,
-						DateCreate = DateTime.Now,
-						DateCheckIn = model.Booking.DateCome,
-						DateCheckOut = model.Booking.DateGo,
-						Sale = 0
-					});
+                    {
+                        BookingID = bookingID,
+                        CategoryID = room.CategoryID,
+                        NumberRoom = 1
+                    });
+                    db.Add(new RentForm
+                    {
+                        RentFormID = rentFormID,
+                        BookingID = bookingID,
+                        StaffID = "S0001",
+                        RoomID = rid,
+                        CustomerID = customerID,
+                        DateCreate = DateTime.Now,
+                        DateCheckIn = model.Booking.DateCome,
+                        DateCheckOut = model.Booking.DateGo,
+                        Sale = 0
+                    });
 
-					db.Customers.Add(model.Customer);
-					db.SaveChanges();
+                    db.Customers.Add(model.Customer);
+                    db.SaveChanges();
 
-					var rentForm = db.RentForms.FirstOrDefault(r => r.RentFormID == rentFormID);
-					await _emailService.SendBookingConfirmationEmail(model.Customer.Email, model.Customer.LastName, rentForm);
+                    var rentForm = db.RentForms.FirstOrDefault(r => r.RentFormID == rentFormID);
+                    await _emailService.SendBookingConfirmationEmail(model.Customer.Email, model.Customer.LastName, rentForm);
 
-					return RedirectToAction("Index", "Home");
-				}
-				catch (Exception ex)
-				{
-					return Content(ex.Message);
-				}
-			}
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    return Content(ex.Message);
+                }
+            }
 
-			ViewBag.Categories = new SelectList(db.Categories.ToList(), "CategoryID", "TypeName");
+            ViewBag.Categories = new SelectList(db.Categories.ToList(), "CategoryID", "TypeName");
 
-			return View("Index");
+            return View("Index");
 		}
 
 		/// <summary>

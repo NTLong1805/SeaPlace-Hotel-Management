@@ -18,6 +18,11 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             this.db = db;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [Route("")]
         [Route("Index")]
         public IActionResult Index(int page = 1)
@@ -73,7 +78,10 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             return View(invoices);
         }
 
-
+        /// <summary>
+        /// Create
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("Create")]
         public IActionResult Create()
@@ -103,6 +111,16 @@ namespace FirstProjectNET.Areas.Admin.Controllers
 
             return View();
         }
+
+        /// <summary>
+        /// Create Post
+        /// </summary>
+        /// <param name="InvoiceID"></param>
+        /// <param name="DateCreate"></param>
+        /// <param name="BookingID"></param>
+        /// <param name="StaffID"></param>
+        /// <param name="PaymentMethod"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create")]
@@ -164,6 +182,11 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Detail
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Details")]
         public IActionResult Details(string id)
@@ -231,6 +254,12 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             return View(); // Trả về view để hiển thị
         }
 
+
+        /// <summary>
+        /// Pay
+        /// </summary>
+        /// <param name="invoiceID"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Pay")]
         [Route("Pay")]
         [ValidateAntiForgeryToken]
@@ -248,6 +277,12 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Route("Delete")]
         public IActionResult Delete(string id)
         {

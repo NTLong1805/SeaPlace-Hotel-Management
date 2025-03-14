@@ -29,6 +29,8 @@ namespace FirstProjectNET.Models
 
 		// Navigation properties
 		public virtual Staff? Staff { get; set; }
+
+		public List<AccountLogin> Logins { get; set; }
 		public virtual ICollection<Customer> Customers { get; set; }
 	}
 }

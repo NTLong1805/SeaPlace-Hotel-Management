@@ -69,16 +69,16 @@ namespace FirstProjectNET.Controllers
                                                         (r, i) => new { r, i })
                                                     .Where(x => x.r.CategoryID == ID).Select(x => x.i.ImageUrl).FirstOrDefault();
 
-            //var RoomService = _hotelDbContext.Rooms
-            //                    .Join(_hotelDbContext.RoomServices, r => r.RoomID, rs => rs.RoomID, (r, rs) => new { r, rs })
-            //                    .Join(_hotelDbContext.Services, rfs => rfs.rs.ServiceID, s => s.ServiceID, (rrs, s) => new { rrs.r, s })
-            //                    .Where(x => x.r.CategoryID == ID)
-            //                    .Select(x => x.s.ServiceName)
-            //                    .Distinct()
-            //                    .ToList();
+            var RoomService = _hotelDbContext.Rooms
+                                .Join(_hotelDbContext.RoomServices, r => r.RoomID, rs => rs.RoomID, (r, rs) => new { r, rs })
+                                .Join(_hotelDbContext.Services, rfs => rfs.rs.ServiceID, s => s.ServiceID, (rrs, s) => new { rrs.r, s })
+                                .Where(x => x.r.CategoryID == ID)
+                                .Select(x => x.s.ServiceName)
+                                .Distinct()
+                                .ToList();
 
             ViewBag.ImageUrl = ImageUrl;
-            //ViewBag.RoomService = string.Join(", ", RoomService);
+            ViewBag.RoomService = string.Join(", ", RoomService);
             return View(room);
         }
     }

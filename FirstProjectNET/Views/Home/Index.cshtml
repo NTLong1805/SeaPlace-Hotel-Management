@@ -41,14 +41,14 @@
             <div class="text-center">
                 <h4>See What a Difference a stay makes</h4>
                 <h1>Luxury <em>is</em> personal</h1>
-                <a class="button home-banner-btn" asp-action="Index" asp-controller="Room">Book Now</a>
+                <a class="button home-banner-btn" asp-action="Index" asp-controller="Properties">Book Now</a>
             </div>
         </div>
     </div>
 </section>
 <!-- ================ end banner area ================= -->
 <!-- ================ start banner form ================= -->
-<form class="form-search form-search-position" asp-controller="Properties" asp-action="RoomAvailable" id = "bookingForm">
+<form class="form-search form-search-position" asp-controller="Properties" asp-action="RoomAvailable" id = "bookingForm" method="get">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 gutters-19 check-date">

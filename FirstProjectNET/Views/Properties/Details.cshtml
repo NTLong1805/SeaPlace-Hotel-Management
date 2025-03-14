@@ -37,8 +37,7 @@
                                     <i class="icon_star"></i>
                                     <i class="icon_star"></i>
                                     <i class="icon_star-half_alt"></i>
-                                </div>
-                                <a asp-controller="HomeBooking" asp-action="Index" asp-route-categoryId="@Model.CategoryID">Booking Now</a>
+                                </div>                                
                             </div>
                         </div>
                         <h2>@string.Format("{0:N0} VND", Model.Price)<span>/Pernight</span></h2>
@@ -59,7 +58,7 @@
                                 </tr>
                                 <tr>
                                     <td class="r-o">Services:</td>
-                                    <td></td>
+                                    <td>@ViewBag.RoomService</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -156,14 +155,14 @@
             <div class="col-lg-4">
                 <div class="room-booking">
                     <h3>Your Reservation</h3>
-                    <form asp-controller="Room" asp-action="RoomAvailable" asp-route-id="@Model.CategoryID" method="get">
+                    <form asp-controller="Properties" asp-action="RoomAvailable" asp-route-id="@Model.CategoryID" method="get" id="bookingForm">
                         <div class="check-date">
                             <label for="date-in">Check In:</label>
-                            <input type="date" name="dateCome" required>
+                            <input type="date" name="dateCome" id="checkIn" required>
                         </div>
                         <div class="check-date">
                             <label for="date-out">Check Out:</label>
-                            <input type="date" name="dateGo" required>
+                            <input type="date" name="dateGo" id="checkOut" required>
                         </div>
                         <button type="submit">Check Availability</button>
                     </form>
@@ -172,3 +171,39 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkInInput = document.getElementById("checkIn");
+        const checkOutInput = document.getElementById("checkOut");
+        const form = document.getElementById("bookingForm");
+
+
+        const today = new Date().toISOString().split("T")[0];
+        checkInInput.setAttribute("min", today);
+
+        checkInInput.addEventListener("change", function () {
+            if (checkInInput.value < today) {
+                alert("Check-in date is not validated");
+                checkInInput.value = today;
+            }
+
+
+            checkOutInput.setAttribute("min", checkInInput.value);
+        });
+
+        checkOutInput.addEventListener("change", function () {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date ");
+                checkOutInput.value = "";
+            }
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (checkOutInput.value < checkInInput.value) {
+                alert("Check-out date must greater than Check-in date");
+                event.preventDefault();
+            }
+        });
+    });
+</script>

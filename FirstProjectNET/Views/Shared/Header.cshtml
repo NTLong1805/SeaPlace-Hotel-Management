@@ -3,7 +3,7 @@
     <div class="container">
         <div class="d-flex align-items-center">
             <div id="logo">
-                    <a href="index.html"><img src="~/TemplateLayout/Page/img/Logo.png" alt="" title="" /></a>
+                    <a asp-action="Index" asp-controller="Home"><img src="~/TemplateLayout/Page/img/Logo.png" alt="" title="" /></a>
             </div>
             <div class="ml-auto d-none d-md-block d-md-flex">
                 <div class="media header-top-info">
@@ -60,9 +60,15 @@
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" asp-action = "Index" asp-controller="Contact">Contact</a></li>
+                    <li class="nav-item submenu dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle = "dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+                        <ul class="dropdown">
+                            <li class="nav-item"><a class="nav-link" asp-action="PersonalDetail" asp-controller="AccountDetail">Information Account</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
-            @if(Context.Session.GetString("Username") != null && Context.Session.GetString("Type") == "Admin")
+            @if (Context.Session.GetString("Username") != null && (Context.Session.GetString("Type") == "Admin" || Context.Session.GetString("Type") == "Staff"))
             {                                   
                   <a class="button button--active home-banner-btn mt-4" asp-action="Logout" asp-controller="Authentication">Logout</a>      
                   <a class="button button--active home-banner-btn mt-4" asp-action="Index" asp-controller="HomeAdmin" asp-area="Admin">Admin</a>

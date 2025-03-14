@@ -1,5 +1,6 @@
 ﻿@model FirstProjectNET.Models.ViewModel.AuthenticationViewModel
 @{
+	
 	Layout = null;
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
@@ -8,7 +9,7 @@
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form method="post" asp-action="SignUp" asp-controller="Authentication" novalidate>
-			<input type="hidden" asp-for="ReturnUrl" />
+			<input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 			<h1>Create Account</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -29,7 +30,7 @@
 	</div>
 	<div class="form-container sign-in-container">
 		<form method="post" asp-action ="SignIn" asp-controller="Authentication">
-			<input type="hidden" asp-for="ReturnUrl" />
+			<input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 			<h1>Sign in</h1>
 			<div class="social-container">
 				<a href="javascript:void(0)" class="social external-login-btn"

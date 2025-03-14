@@ -1,9 +1,12 @@
 ﻿
 using FirstProjectNET.Data;
+using FirstProjectNET.Models;
 using FirstProjectNET.Service;
+using FirstProjectNET.ServiceFolder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -24,11 +27,18 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddCookie(options =>
+builder.Services.AddAuthentication(options =>
 {
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;    
+})
+.AddCookie(IdentityConstants.ApplicationScheme,options =>
+{    
     options.LoginPath = "/Authentication/Auth";
 })
+.AddCookie(IdentityConstants.ExternalScheme)
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddGoogle(options =>
 {
    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
@@ -40,7 +50,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"];
 });
 
+builder.Services.AddIdentityCore<Account>()
+        .AddUserStore<AccountStore>()
+        .AddSignInManager<SignInManager<Account>>()
+        .AddDefaultTokenProviders();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<UserManager<Account>>();
+builder.Services.AddScoped<SignInManager<Account>>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("StafforAdmin", policy => policy.RequireRole("Admin","Staff"));
+});
 
 var app = builder.Build();
 
@@ -63,8 +85,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
+
 
 
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirstProjectNET.Controllers
 {
-	   
     public class GalleryController : Controller
     {
         [HttpGet]
