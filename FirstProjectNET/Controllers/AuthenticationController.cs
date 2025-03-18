@@ -29,6 +29,21 @@ namespace FirstProjectNET.Controllers
             _signInManager = signInManager;
             
         }
+
+        public string GenerateNextCustomerID()
+        {
+            var lastCustomer = _context.Customers.OrderByDescending(x => x.CustomerID).FirstOrDefault();
+            if(lastCustomer == null || string.IsNullOrWhiteSpace(lastCustomer.CustomerID))
+            {
+                return "CUS00001";
+            }    
+            int lastID = int.Parse(lastCustomer.CustomerID.Substring(3));
+            int nextID = lastID + 1;
+
+            return $"CUS{nextID:D5}";
+        }
+        
+        ///
         /// <summary>
         /// Auth
         /// </summary>
@@ -50,6 +65,12 @@ namespace FirstProjectNET.Controllers
             }       
         }
 
+        /// <summary>
+        /// SignUp
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="ReturnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> SignUp(AuthenticationViewModel model,string? ReturnUrl = null)
         {
@@ -109,15 +130,32 @@ namespace FirstProjectNET.Controllers
                     Type = Models.Common.AccountType.Customer,
                     Active = true
                 };
-
                 var result = await _userManager.CreateAsync(newAccount);
+                
+                
+                var splitName = SplitName(model.SignUpUserName);
+                var newCustomer = new Customer
+                {
+                    CustomerID = GenerateNextCustomerID(),
+                    AccountID = newAccount.AccountID,
+                    FirstName = splitName.FirstName,
+                    LastName = splitName.LastName,
+                    Email = model.SignUpEmail,
+                    Phone = "0123456789",
+                    Address = "Unknow",
+                    Membership = Membership.Bronze,
+                };
+                _context.Customers.Add(newCustomer);
+                _context.SaveChanges();
 
+              
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(newAccount, isPersistent: false);
 
                     HttpContext.Session.SetString("Username", model.SignUpUserName);
                     HttpContext.Session.SetString("Type", newAccount.Type.ToString());
+                    HttpContext.Session.SetString("AccountID",newAccount.AccountID.ToString());
 
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
@@ -233,6 +271,7 @@ namespace FirstProjectNET.Controllers
 
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Type", user.Type.ToString());
+                HttpContext.Session.SetString("AccountID", user.AccountID.ToString());
 
                 if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                 {
@@ -382,5 +421,17 @@ namespace FirstProjectNET.Controllers
             //return Content($"<script>alert('Email claim not received. Please contact support.'); window.close();</script>", "text/html");
         }
         
+
+        public (string FirstName,string LastName) SplitName(string FullName)
+        {
+            var parts = FullName.Trim().Split(' ');
+            if(parts.Length == 1)
+            {
+                return (parts[0], "");
+            }
+            string firstName = parts[0];
+            string lastName = string.Join(" ", parts[1..]);
+            return (firstName, lastName);
+        }
     }
 }

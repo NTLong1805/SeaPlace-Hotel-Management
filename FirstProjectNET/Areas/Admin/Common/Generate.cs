@@ -3,6 +3,7 @@ using System.Text;
 using System;
 using FirstProjectNET.Models;
 using FirstProjectNET.Models.Common;
+using System.Security.Cryptography;
 
 namespace FirstProjectNET.Areas.Admin.Common
 {
@@ -11,6 +12,15 @@ namespace FirstProjectNET.Areas.Admin.Common
         private static readonly PasswordHasher<Account> _paswordHasher = new PasswordHasher<Account>();
         public static Dictionary<string, string> _account = new Dictionary<string, string>();
 
+
+        private static string HashPassword(string signUpPassword)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(signUpPassword));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
+        }
         /// <summary>
         /// Generate Account
         /// </summary>
@@ -54,7 +64,7 @@ namespace FirstProjectNET.Areas.Admin.Common
             }
             _account[userName] = password.ToString();
 
-            return new Account { Username = userName, Password = _paswordHasher.HashPassword(null, password.ToString()), Type = _type, Active = false,Email = _email };
+            return new Account { Username = userName, Password = HashPassword(password.ToString()), Type = _type, Active = false,Email = _email };
         }
     }
 }

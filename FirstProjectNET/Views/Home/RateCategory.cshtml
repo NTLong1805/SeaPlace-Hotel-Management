@@ -1,0 +1,35 @@
+﻿@model FirstProjectNET.Models.ViewModel.HomeViewModel;
+<section class="section-margin">
+    <div class="container">
+        <div class="section-intro text-center pb-20px">
+            <div class="section-intro__style">
+                <img src="~/TemplateLayout/Page/img/home/bed-icon.png" alt="">
+            </div>
+            <h2>Our Guest Love Us</h2>
+        </div>
+        <div class="owl-carousel owl-theme testi-carousel">
+            @{
+                int j = 0;
+            }
+            @foreach (var rate in Model.Rates)
+            {
+                j++;
+                <div class="testi-carousel__item">
+                    <div class="media">
+                        <div class="testi-carousel__img">
+                            <img src="~/TemplateLayout/Page/img/home/testimonial@(j).png" alt="">
+                        </div>
+                        <div class="media-body">
+                            <p>@rate.Message</p>
+                            <div class="testi-carousel__intro">
+                                <h3>@rate.Username</h3>
+                                <p>@rate.DateCreate</p>
+                                <p>@rate.Point</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

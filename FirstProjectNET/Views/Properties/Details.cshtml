@@ -1,4 +1,4 @@
-﻿@model FirstProjectNET.Models.Category
+﻿@model FirstProjectNET.Models.ViewModel.PropertiesViewModel.DetailRoomViewModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -12,7 +12,7 @@
                 <nav aria-label="breadcrumb" class="banner-breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page"><a asp-action="Index" asp-controller="Room">Room</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a asp-action="Index" asp-controller="Properties">Room</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Room Details</li>
                     </ol>
                 </nav>
@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="room-details-item">                   
-                    <img src="@ViewBag.ImageUrl" alt="" style="width:770px;height:440px;">
+                    <img src="@Model.ImageUrl" alt="" style="width:770px;height:440px;">
                     <div class="rd-text">
                         <div class="rd-title">
                             <h3>@Model.TypeName</h3>
@@ -58,7 +58,7 @@
                                 </tr>
                                 <tr>
                                     <td class="r-o">Services:</td>
-                                    <td>@ViewBag.RoomService</td>
+                                    <td>@string.Join(", ", Model.ServiceName)</td>
                                 </tr>
                             </tbody>
                         </table>

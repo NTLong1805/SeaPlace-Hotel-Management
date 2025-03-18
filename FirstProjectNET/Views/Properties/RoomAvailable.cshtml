@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FirstProjectNET.Models.ViewModel.PropertiesViewModel
+@{
     ViewData["Title"] = "Available Rooms";
 }
 <section class="contact-banner-area" id="contact">
@@ -27,44 +28,32 @@
             </div>
             <h2>Rooms Available</h2>
         </div>
-        @{
-            if(ViewBag.Rooms.Count < 0)
-            {
-                <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
-                    <h3>Oops! No Available Room!</h3>
-                    <a type="button" class="button button-form" asp-action="Index" asp-controller="Properties">Back</a>
-                </div>
-            }
-        }
+        
         <div class="row pb-4">
             @{
                 int i = 0;
             }
-            @foreach (var room in ViewBag.Rooms)
+            @foreach (var room in Model.RoomAvailableViewModels)
             {
                 i++;
-                string Url = "";
+                
                 string price = string.Format("{0:N0} VND", room.Category.Price);
                 int capacity = int.Parse(room.Category.CategoryID.ToString().Substring(room.Category.CategoryID.ToString().Length - 2)) + 1;
-                foreach(var image in room.Images)
-                {
-                    Url += image.ImageUrl;
-                    break;
-                }
+               
 
                 <div class="col-md-6 col-xl-4 mb-5">
                     <div class="card card-explore">
                         <div class="card-explore__img">
-                            <img class="card-img" src="@Url" alt="Room Image">
+                            <img class="card-img" src="@room.ImageUrl.FirstOrDefault()" alt="Room Image">
                         </div>
                         <div class="card-body">
                             <h3 class="card-explore__price">@price<sub>/ Per Night</sub></h3>
                             <h4 class="card-explore__title"><a href="#">@room.Category.TypeName</a></h4>                            
                             <h4 class="card-explore__title">@room.RoomID</h4>
                             <a class="card-explore__link" asp-action ="Index" asp-controller="HomeBooking"
-                            asp-route-categoryId="@ViewBag.CategoryID"
-                            asp-route-roomId ="@room.RoomID" asp-route-dateCome ="@ViewBag.DateCome"
-                            asp-route-dateGo="@ViewBag.DateGo" asp-route-numPeople="NumberOfPeople">Book Now <i class="ti-arrow-right"></i></a>
+                            asp-route-categoryId="@room.Category.CategoryID"
+                            asp-route-roomId ="@room.RoomID" asp-route-dateCome ="@Model.DateCome"
+                            asp-route-dateGo="@Model.DateGo" asp-route-numPeople="@Model.NumberPeople">Book Now <i class="ti-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>

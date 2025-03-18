@@ -1,4 +1,4 @@
-﻿@model FirstProjectNET.Models.Category
+﻿@model FirstProjectNET.Models.ViewModel.AdminCategoryViewModel
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
@@ -15,7 +15,7 @@
             <div style="margin-top: 7px" class="form-group row">
                 <label asp-for="CategoryID" class="col-sm-2 col-form-label">Category ID</label>
                 <div class="col-sm-8">
-                    <input asp-for="CategoryID" class="form-control" placeholder="Category ID" readonly="readonly"/>
+                    <input asp-for="CategoryID" class="form-control" placeholder="Category ID" value="@Model.CategoryID" readonly="readonly"/>
                 </div>
                 <span asp-validation-for="CategoryID" class="text-danger col-sm-2"></span>
             </div>
@@ -23,7 +23,7 @@
             <div style="margin-top: 7px" class="form-group row">
                 <label asp-for="TypeName" class="col-sm-2 col-form-label">Type Name</label>
                 <div class="col-sm-8">
-                    <select asp-for="TypeName" class="form-control" asp-items="@(new SelectList(ViewBag.TypeName))">
+                    <select asp-for="TypeName" class="form-control" asp-items="@(Model.ListTypeName != null ? new SelectList(Model.ListTypeName) : new SelectList(new List<string>()))">
                         <option value="">-- Select Type --</option>
                     </select>
                 </div>
@@ -33,7 +33,7 @@
             <div style="margin-top: 7px" class="form-group row">
                 <label asp-for="Capacity" class="col-sm-2 col-form-label">Capacity</label>
                 <div class="col-sm-8">
-                    <input asp-for="Capacity" class="form-control" placeholder="Capacity" />
+                    <input asp-for="Capacity" class="form-control" placeholder="Capacity" value="@Model.Capacity" />
                 </div>
                 <span asp-validation-for="Capacity" class="text-danger col-sm-2"></span>
             </div>
@@ -41,17 +41,29 @@
             <div style="margin-top: 7px" class="form-group row">
                 <label asp-for="Price" class="col-sm-2 col-form-label">Price</label>
                 <div class="col-sm-8">
-                    <input asp-for="Price" class="form-control" placeholder="Price" />
+                    <input asp-for="Price" class="form-control" placeholder="Price" value="@Model.Price"/>
                 </div>
                 <span asp-validation-for="Price" class="text-danger col-sm-2"></span>
             </div>
 
-            <div style="margin-top:10px" class="form-group row">
+            @if(Context.Session.GetString("Type") == "Admin")
+            {
+                <div style="margin-top:10px" class="form-group row">
                 <div class="col-sm-8 offset-sm-0">
                     <button type="submit" class="btn btn-warning">Edit</button>
                     <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Categories")'">Back to List</button>
                 </div>
-            </div>
+                </div>
+            }
+            else
+            {
+                <div style="margin-top:10px" class="form-group row">
+                    <div class="col-sm-8 offset-sm-0">
+                        <button type="submit" class="btn btn-warning" disable>Edit</button>
+                        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index", "Categories")'">Back to List</button>
+                    </div>
+                </div>
+            }
         </form>
     </div>
 </div>

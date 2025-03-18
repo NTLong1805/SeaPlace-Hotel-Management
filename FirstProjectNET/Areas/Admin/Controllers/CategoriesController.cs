@@ -1,6 +1,8 @@
-﻿using FirstProjectNET.Data;
+﻿using AutoMapper;
+using FirstProjectNET.Data;
 using FirstProjectNET.Models;
 using FirstProjectNET.Models.Common;
+using FirstProjectNET.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,18 +12,20 @@ namespace FirstProjectNET.Areas.Admin.Controllers
     [Route("Admin/Categories")]
     public class CategoriesController : Controller
     {
-        private HotelDbContext db;
+        private HotelDbContext _db;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(HotelDbContext db)
+        public CategoriesController(HotelDbContext db,IMapper mapper)
         {
-            this.db = db;
+            _db = db;
+            _mapper = mapper;
         }
 
         [Route("")]
         [Route("Index")]
         public IActionResult Index(string SortColumn = "CategoryID", string IconClass = "fa-sort-asc", int page = 1)
         {
-            var categories = db.Categories.AsQueryable();
+            var categories = _db.Categories.AsQueryable();
             // Sắp xếp
             ViewBag.SortColumn = SortColumn;
             ViewBag.IconClass = IconClass;
@@ -34,7 +38,9 @@ namespace FirstProjectNET.Areas.Admin.Controllers
             ViewBag.Page = page;
             ViewBag.NoOfPages = NoOfPages;
             categories = categories.Skip(NoOfRecordToSkip).Take(NoOfRecordPerPage);
-            return View(categories.ToList());
+            var categoryList = categories.ToList();
+            var categoryViewModel = _mapper.Map<IEnumerable<AdminCategoryViewModel>>(categoryList);
+            return View(categoryViewModel);
         }
         // Phương thức sắp xếp riêng trả về IQueryable
         private IQueryable<Category> SortRooms(IQueryable<Category> categories, string SortColumn, string IconClass)
@@ -68,23 +74,28 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                 // Not permission
                 return RedirectToAction("AccessDenied", "Account");
             }
-
-            ViewBag.TypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen"};
-            return View();
+            var model = new AdminCategoryViewModel
+            {
+                ListTypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen" }
+            };
+            //ViewBag.TypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen"};
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create")]
-        public IActionResult Create(Category category)
+        public IActionResult Create(AdminCategoryViewModel model)
         {
+            ModelState.Remove("ListTypeName");
             if (ModelState.IsValid)
             {
-                Category oldCategory = db.Categories.Find(category.CategoryID);
+                Category oldCategory = _db.Categories.Find(model.CategoryID);
                 if(oldCategory == null)
                 {
-                    db.Categories.Add(category);
-                    db.SaveChanges();
+                    var category = _mapper.Map<Category>(model);
+                    _db.Categories.Add(category);
+                    _db.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -92,8 +103,9 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                     ModelState.AddModelError("CategoryID", "CategoryID đã tồn tại.");
                 }
             }
-            ViewBag.TypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen" };
-            return View(category);
+            
+            model.ListTypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen" };
+            return View(model);
         }
 
         [Route("Edit")]
@@ -107,35 +119,39 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            if (id == null || db.Categories == null)
+            if (id == null || _db.Categories == null)
             {
                 return NotFound();
             }
-            var category = db.Categories.Find(id);
+            var category = _db.Categories.Find(id);
+            var categoryViewModel = _mapper.Map<AdminCategoryViewModel>(category);
+
             if(category == null)
             {
                 return NotFound();
             }
-            ViewBag.TypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple",
+            categoryViewModel.ListTypeName = new List<string> { "Standard Single", "Standard Twin", "Superior Single", "Superior Twin", "Superior Triple",
         "Deluxe Single", "Deluxe Twin", "Suite Single", "Suite Twin", "Suite Triple", "Suite Queen"};
-            return View(category);
+            return View(categoryViewModel);
         }
 
         [HttpPost]
         [Route("Edit")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, Category category)
+        public IActionResult Edit(string id, AdminCategoryViewModel model)
         {
+            ModelState.Remove("ListTypeName");
             if (ModelState.IsValid)
             {
                 try
                 {
-                    db.Update(category);
-                    db.SaveChanges();
+                    var category = _mapper.Map<Category>(model);
+                    _db.Update(category);
+                    _db.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CategoryID))
+                    if (!CategoryExists(model.CategoryID))
                     {
                         return NotFound();
                     }
@@ -146,11 +162,17 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            model.ListTypeName = new List<string>
+            {
+                "Standard Single", "Standard Twin", "Superior Single", "Superior Twin",
+                "Superior Triple", "Deluxe Single", "Deluxe Twin", "Suite Single",
+                "Suite Twin", "Suite Triple", "Suite Queen"
+            };
+            return View(model);
         }
         private bool CategoryExists(string id)
         {
-            return (db.Categories?.Any(e => e.CategoryID == id)).GetValueOrDefault();
+            return (_db.Categories?.Any(e => e.CategoryID == id)).GetValueOrDefault();
         }
 
         [Route("Delete")]
@@ -164,12 +186,12 @@ namespace FirstProjectNET.Areas.Admin.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            if (id== null || db.Categories == null)
+            if (id== null || _db.Categories == null)
             {
                 return NotFound();
             }
 
-            var category = db.Categories.Include(r => r.Rooms).FirstOrDefault(c => c.CategoryID == id);
+            var category = _db.Categories.Include(r => r.Rooms).FirstOrDefault(c => c.CategoryID == id);
 
             if(category == null)
             {
@@ -189,16 +211,16 @@ namespace FirstProjectNET.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)
         {
-            if (db.Categories == null)
+            if (_db.Categories == null)
             {
                 return Problem("Entity set 'Categories' is null.");
             }
-            var category = db.Categories.Find(id);
+            var category = _db.Categories.Find(id);
             if(category != null)
             {
-                db.Categories.Remove(category);
+                _db.Categories.Remove(category);
             }
-            db.SaveChanges();
+            _db.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }

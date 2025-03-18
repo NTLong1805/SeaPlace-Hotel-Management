@@ -24,7 +24,8 @@
                 {
                         <div class="media header-top-info">                            
                             <div class="media-body">
-                                <span>Hello, @Context.Session.GetString("Username")</span>                                      
+                                <span>Hello, @Context.Session.GetString("Username")</span>     
+                                <span>@Context.Session.GetString("Type")</span>
                             </div>
                         </div>
                 }               
@@ -60,13 +61,16 @@
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" asp-action = "Index" asp-controller="Contact">Contact</a></li>
-                    <li class="nav-item submenu dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle = "dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
-                        <ul class="dropdown">
-                            <li class="nav-item"><a class="nav-link" asp-action="PersonalDetail" asp-controller="AccountDetail">Information Account</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                    @if(Context.Session.GetString("Username") != null)
+                    {
+                        <li class="nav-item submenu dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+                              <ul class="dropdown">
+                                   <li class="nav-item"><a class="nav-link" asp-action="PersonalDetail" asp-controller="AccountDetail">Account</a></li>
+                              </ul>
+                        </li>
+                    }
+                 </ul>
             </div>
             @if (Context.Session.GetString("Username") != null && (Context.Session.GetString("Type") == "Admin" || Context.Session.GetString("Type") == "Staff"))
             {                                   

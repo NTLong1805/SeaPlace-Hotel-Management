@@ -78,8 +78,8 @@
 								<td>@i.Phone</td>
 								<td>@i.Role</td>
 								<td>
-									<a asp-controller="Staff" asp-action="Edit" asp-route-idStaff="@i.StaffID" class="btn btn-primary">Edit</a>
-									<a asp-controller="Staff" asp-action="Delete" asp-route-idStaff="@i.StaffID" class="btn btn-danger">Delete</a>
+									<a asp-action="Edit" asp-controller="Staff" asp-route-idStaff="@i.StaffID"><abbr title="Edit"><img src="~/img/edit.png" width="20" height="20" /></abbr></a>
+									<a asp-action="Delete" asp-controller="Staff" asp-route-id="@i.StaffID"><abbr title="Delete"><img src="/img/delete.png" width="20" height="20" /></abbr></a>
 								</td>
 							</tr>
 						}

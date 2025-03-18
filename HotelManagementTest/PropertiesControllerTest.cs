@@ -20,12 +20,12 @@ namespace HotelManagementTest
 
             _hotelDbContext = new HotelDbContext(option);
             SeedDatabase();
-            _controller = new PropertiesController(_hotelDbContext);
+            
         }
 
         private void SeedDatabase()
-        {         
-            _hotelDbContext.Categories.Add(new Category { CategoryID = "Standard10",TypeName = "Standard Extend",Capacity = 5,Price = 5000000});
+        {
+            _hotelDbContext.Categories.Add(new Category { CategoryID = "Standard10", TypeName = "Standard Extend", Capacity = 5, Price = 5000000 });
             _hotelDbContext.Rooms.Add(new Room { RoomID = "R105", CategoryID = "Standard10", Status = "Vacant", Description = null });
             _hotelDbContext.RentForms.Add(new RentForm
             {
@@ -40,14 +40,14 @@ namespace HotelManagementTest
                 Sale = 0.10m
             });
             _hotelDbContext.Images.Add(new Image { ImageID = "I1", RoomID = "R105", ImageUrl = "room1.jpg" });
-            _hotelDbContext.Services.Add(new Services { ServiceID = "S1", ServiceName = "WiFi",Price = 0,Description= "hello" });
+            _hotelDbContext.Services.Add(new Services { ServiceID = "S1", ServiceName = "WiFi", Price = 0, Description = "hello" });
             _hotelDbContext.RoomServices.Add(new RoomService { RoomID = "R105", ServiceID = "S1" });
             _hotelDbContext.SaveChanges();
         }
         [Fact]
         public void Index_Return_View_With_Correct_Pagination()
         {
-            var result = _controller.Index(page:1) as ViewResult;
+            var result = _controller.Index(page: 1) as ViewResult;
             Assert.NotNull(result);
             Assert.NotNull(result.ViewData["Page"]);
             Assert.NotNull(result.ViewData["NoOfPage"]);
@@ -58,7 +58,7 @@ namespace HotelManagementTest
             var dateCome = DateTime.Now;
             var dateGo = DateTime.Now.AddDays(1);
 
-            var result = _controller.RoomAvailable(null,dateCome,dateGo,2) as ViewResult;
+            var result = _controller.RoomAvailable(null, dateCome, dateGo, 2) as ViewResult;
             Assert.NotNull(result);
             Assert.NotNull(result.ViewData["Rooms"]);
         }

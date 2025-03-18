@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FirstProjectNET.Models.ViewModel.PropertiesViewModel
+@{
     ViewData["Title"] = "Properties";
 }
 <style>
@@ -97,7 +98,7 @@
             @{
                 int i = 0;
             }
-            @foreach(var category in ViewBag.Categories)
+            @foreach(var category in Model.Categories)
             {
                 i++;
                 int capacity = int.Parse(category.CategoryID.ToString().Substring(category.CategoryID.ToString().Length - 2));

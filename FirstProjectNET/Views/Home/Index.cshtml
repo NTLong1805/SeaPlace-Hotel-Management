@@ -120,43 +120,11 @@
     </div>
 </section>
 <!-- ================ welcome section end ================= -->
-<!-- ================ Explore section start ================= -->
-<section class="section-margin">
-    <div class="container">
-        <div class="section-intro text-center pb-80px">
-            <div class="section-intro__style">
-                <img src="~/TemplateLayout/Page/img/home/bed-icon.png" alt="">
-            </div>
-            <h2>Explore Our Rooms</h2>
-        </div>
 
-        <div class="row">
-            @{
-                int i = 0;
-            }
-            @foreach(var room in ViewBag.Rooms)
-            {
-                i++;
-                string category = (room.CategoryID.ToString().Substring(0,room.CategoryID.ToString().Length -2));
-                string price = string.Format("{0:N0} VND",room.Price);
-                <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                    <div class="card card-explore">
-                        <div class="card-explore__img">
-                            <img class="card-img" src="/TemplateLayout/Page/img/room/room-b@(i).jpg" alt="">
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-explore__price">@price<sub>/ Per Night</sub></h3>
-                            <h4 class="card-explore__title"><a href="#">@category</a></h4>
-                            <p>Beginning fourth dominion creeping god was. Beginning, which fly yieldi dry beast moved blessed </p>                            
-                            <a class="card-explore__link" href="#">Book Now <i class="ti-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            }           
-        </div>
-    </div>
-</section>
+<!-- ================ Explore section start ================= -->
+<partial name="SectionCategory" />
 <!-- ================ Explore section end ================= -->
+
 <!-- ================ video section start ================= -->
 <section class="video-area">
     <div class="container">
@@ -170,74 +138,13 @@
     </div>
 </section>
 <!-- ================ video section end ================= -->
+
 <!-- ================ special section start ================= -->
-<section class="section-padding bg-porcelain">
-    <div class="container">
-        <div class="section-intro text-center pb-80px">
-            <div class="section-intro__style">
-                <img src="~/TemplateLayout/Page/img/home/bed-icon.png" alt="">
-            </div>
-            <h2>Special Facilities</h2>
-        </div>
-        <div class="special-img mb-30px">
-            <img class="img-fluid" src="~/TemplateLayout/Page/img/home/special.png" alt="">
-        </div>
-        <div class="row">
-            @foreach(var service in ViewBag.Services)
-            {
-                <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
-                    <div class="card card-special">
-                        <div class="media align-items-center mb-1">
-                            <span class="card-special__icon"><i class="ti-home"></i></span>
-                            <div class="media-body">
-                                <h4 class="card-special__title">@service.ServiceName</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p>@service.Description</p>
-                        </div>
-                    </div>
-                </div>
-            }           
-        </div>
-    </div>
-</section>
+<partial name ="ServiceCategory" />
 <!-- ================ special section end ================= -->
+
 <!-- ================ carousel section start ================= -->
-<section class="section-margin">
-    <div class="container">
-        <div class="section-intro text-center pb-20px">
-            <div class="section-intro__style">
-                <img src="~/TemplateLayout/Page/img/home/bed-icon.png" alt="">
-            </div>
-            <h2>Our Guest Love Us</h2>
-        </div>
-        <div class="owl-carousel owl-theme testi-carousel">
-            @{
-                int j = 0;
-            }
-           @foreach(var rate in ViewBag.Rates)
-            {
-                j++;
-                <div class="testi-carousel__item">
-                    <div class="media">
-                        <div class="testi-carousel__img">
-                            <img src="~/TemplateLayout/Page/img/home/testimonial@(j).png" alt="">
-                        </div>
-                        <div class="media-body">
-                            <p>@rate.Message</p>
-                            <div class="testi-carousel__intro">
-                                <h3>@rate.Username</h3>
-                                <p>@rate.DateCreate</p>
-                                <p>@rate.Point</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }            
-        </div>
-    </div>
-</section>
+<partial name = "RateCategory" />
 <!-- ================ carousel section end ================= -->
 <!-- ================ news section start ================= -->
 <section class="section-margin">

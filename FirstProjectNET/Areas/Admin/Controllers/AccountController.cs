@@ -10,7 +10,7 @@ namespace FirstProjectNET.Areas.Admin.Controllers
 {
 	[Area("Admin")]
 	[Route("Account")]
-	[Authorize]
+	
 	public class AccountController : Controller
 	{
 		private HotelDbContext db;

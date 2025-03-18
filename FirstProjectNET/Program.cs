@@ -3,6 +3,7 @@ using FirstProjectNET.Data;
 using FirstProjectNET.Models;
 using FirstProjectNET.Service;
 using FirstProjectNET.ServiceFolder;
+using FirstProjectNET.Mapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -63,6 +64,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("StafforAdmin", policy => policy.RequireRole("Admin","Staff"));
 });
+
+builder.Services.AddAutoMapper(typeof(FirstProjectNET.Mapper.AutoMapper));
+
 
 var app = builder.Build();
 

@@ -1,0 +1,31 @@
+﻿@model FirstProjectNET.Models.ViewModel.PropertiesViewModel.RateViewModel
+<div class="review-add">
+    <h4>Add Review</h4>
+    <form action="#" class="ra-form">
+        <div class="row">
+            <div class="col-lg-6">
+                <input type="text" placeholder="Userame*" asp-for="Username" required>
+            </div>
+            <div class="col-lg-6">
+                <input type="text" placeholder="Email*" asp-for="Email" required>
+            </div>
+            <div class="col-lg-6">
+                <input type="number" max="10" min="0" placeholder="Rating" asp-for="Point" required />
+            </div>
+            <div class="col-lg-12">
+                <div>
+                    <h5>Your Comment:</h5>
+                    <div class="rating">
+                        <i class="icon_star"></i>
+                        <i class="icon_star"></i>
+                        <i class="icon_star"></i>
+                        <i class="icon_star"></i>
+                        <i class="icon_star-half_alt"></i>
+                    </div>
+                </div>
+                <textarea placeholder="Your Review" asp-for="Message" required></textarea>
+                <button type="submit">Submit Now</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,7 +1,10 @@
+using AutoMapper;
 using FirstProjectNET.Data;
 using FirstProjectNET.Models;
+using FirstProjectNET.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net.WebSockets;
 
 namespace FirstProjectNET.Controllers
 {
@@ -9,11 +12,13 @@ namespace FirstProjectNET.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HotelDbContext _hotelDbContext;
+        private readonly IMapper _iMapper;
 
-        public HomeController(ILogger<HomeController> logger,HotelDbContext hotelDbContext)
+        public HomeController(ILogger<HomeController> logger,HotelDbContext hotelDbContext,IMapper Mapper)
         {
             _logger = logger;
             _hotelDbContext = hotelDbContext;
+            _iMapper = Mapper;
         }
 
         public IActionResult Index()
@@ -37,10 +42,24 @@ namespace FirstProjectNET.Controllers
                 }
             }
 
-            ViewBag.Rates = _hotelDbContext.Rates.ToList();
-            ViewBag.Services = _hotelDbContext.Services.Where(s=>s.ServiceID == "S0006" || s.ServiceID == "S0007" || s.ServiceID == "S0008").ToList();
-            ViewBag.Rooms = rooms;
-            return View();
+            var roomCategory = _iMapper.Map<IEnumerable<HomeViewModel.CategoryViewModel>>(rooms);
+
+
+            var Services = _hotelDbContext.Services.Where(s => s.ServiceID == "S0006" || s.ServiceID == "S0007" || s.ServiceID == "S0008").ToList();
+            var serviceCategory = _iMapper.Map<IEnumerable<HomeViewModel.ServiceViewModel>>(Services);
+
+            var rates = _hotelDbContext.Rates.ToList();
+            var rateCategory = _iMapper.Map<IEnumerable<HomeViewModel.RateViewModel>>(rates);
+
+            var model = new HomeViewModel
+            {
+                Services = serviceCategory,
+                Rates = rateCategory,
+                Categories = roomCategory
+            };
+
+            //ViewBag.Rooms = rooms;
+            return View(model);
         }
 
         public IActionResult Privacy()

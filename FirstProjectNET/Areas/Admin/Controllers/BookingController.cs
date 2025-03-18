@@ -4,6 +4,8 @@ using FirstProjectNET.Data;
 using FirstProjectNET.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using FirstProjectNET.Models.Common;
+using FirstProjectNET.Models.ViewModel;
+using AutoMapper;
 
 namespace FirstProjectNET.Controllers
 {
@@ -11,16 +13,18 @@ namespace FirstProjectNET.Controllers
     [Route("Admin/Booking")]
     public class BookingController : Controller
     {
-        private readonly HotelDbContext db;
-        public BookingController(HotelDbContext database)
+        private readonly HotelDbContext _db;
+        private readonly IMapper _mapper;
+        public BookingController(HotelDbContext database,IMapper mapper)
         {
-            db = database;
+            _db = database;
+            _mapper = mapper;
         }
 
         private string GenerateBookingID()
         {
             string prefix = "BK";
-            var lastBooking = db.Bookings.OrderByDescending(x => x.BookingID).FirstOrDefault();
+            var lastBooking = _db.Bookings.OrderByDescending(x => x.BookingID).FirstOrDefault();
             if (lastBooking == null)
             {
                 return prefix + "00001";
@@ -37,38 +41,45 @@ namespace FirstProjectNET.Controllers
         public IActionResult Create()
         {
             var newBoookingID = GenerateBookingID();
-            ViewBag.NewBookingID = newBoookingID;
+            //ViewBag.NewBookingID = newBoookingID;
 
-            var CustomerList = db.Customers.Select(c => new SelectListItem
+            var customerList = _db.Customers.Select(c => new SelectListItem
             {
                 Value = c.CustomerID.ToString(),
-                Text = c.CustomerID.ToString()
+                Text = c.FirstName.ToString() + " " + c.LastName.ToString()
             }).ToList();
-            ViewBag.CustomerList = CustomerList;
-            return View();
+
+            var ViewModel = new AdminBookingViewModel
+            {
+                BookingID = newBoookingID,
+                CustomerList = customerList
+            };
+            // ViewBag.CustomerList = CustomerList;
+            return View(ViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create")]
-        public IActionResult Create(Booking booking)
+        public IActionResult Create(AdminBookingViewModel viewModel)
         {
-            if(booking.DateGo < booking.DateCome)
+            if(viewModel.DateGo < viewModel.DateCome)
             {
                 ModelState.AddModelError("DateGo", "DateGo must be greater than DateCome");
             }    
-            if(string.IsNullOrEmpty(booking.BookingID) || booking.CustomerID == "--Select CustomerID--" || booking.CustomerID == null)
+            if(string.IsNullOrEmpty(viewModel.BookingID) || viewModel.CustomerID == "--Select CustomerID--" || viewModel.CustomerID == null)
             {
                 ModelState.AddModelError("CustomerID", "CustomerID is Required");
-            }    
-           
+            }
+            ModelState.Remove("CustomerList");
             if (ModelState.IsValid)
             {
-                var existingBooking = db.Bookings.FirstOrDefault(b => b.BookingID == booking.BookingID);
+                var existingBooking = _db.Bookings.FirstOrDefault(b => b.BookingID == viewModel.BookingID);
                 if (existingBooking == null)
                 {
-                    db.Bookings.Add(booking);
-                    db.SaveChanges();
+                    var booking = _mapper.Map<Booking>(viewModel);
+                    _db.Bookings.Add(booking);
+                    _db.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -76,22 +87,25 @@ namespace FirstProjectNET.Controllers
                     ModelState.AddModelError("BookingID", "Booking ID already exists.");
                 }
             }
-            var CustomerList = db.Customers.Select(c => new SelectListItem
+            var CustomerList = _db.Customers.Select(c => new SelectListItem
             {
                 Value = c.CustomerID.ToString(),
-                Text = c.CustomerID.ToString()
+                Text = c.FirstName.ToString() + " " + c.LastName.ToString()
             }).ToList();
-            ViewBag.CustomerList = CustomerList;
-            var newBoookingID = GenerateBookingID();
-            ViewBag.NewBookingID = newBoookingID;
-            return View(booking);
+            viewModel.CustomerList = CustomerList;
+            viewModel.BookingID = GenerateBookingID();
+
+            //ViewBag.CustomerList = CustomerList;
+            
+            
+            return View(viewModel);
         }
 
         [Route("")]
         [Route("Index")]
         public IActionResult Index(string SortColumn = "BookingID", string iconClass = "fa-sort-asc", int page = 1, string searchQuery = "")
         {
-            var booking = db.Bookings.AsQueryable();
+            var booking = _db.Bookings.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
@@ -111,7 +125,10 @@ namespace FirstProjectNET.Controllers
             ViewBag.NoOfPages = NoOfPages;
             booking = booking.Skip(NoOfRecordToSkip).Take(NoOfRecoredPerPage);
 
-            return View(booking.ToList());
+            var bookingList = booking.ToList();
+            var bookingViewModel = _mapper.Map<IEnumerable<Booking>>(bookingList);
+
+            return View(bookingViewModel);
         }
 
         private IQueryable<Booking> SortBooking(IQueryable<Booking> booking, string SortColumn, string IconClass)
@@ -150,23 +167,24 @@ namespace FirstProjectNET.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            if (id == null || db.Bookings == null)
+            if (id == null || _db.Bookings == null)
             {
                 return NotFound();
             }
-            var booking = db.Bookings.Find(id);
+            var booking = _db.Bookings.Find(id);
+            var bookingViewModel = _mapper.Map<AdminBookingViewModel>(booking);
             if (booking == null)
             {
                 return NotFound();
             }
-            return View(booking);
+            return View(bookingViewModel);
         }
         [HttpPost]
         [Route("Edit")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, Booking booking)
+        public IActionResult Edit(string id, AdminBookingViewModel model)
         {
-            if (booking.DateGo < booking.DateCome)
+            if (model.DateGo < model.DateCome)
             {
                 ModelState.AddModelError("DateGo", "DateGo must be greater than DateCome");
             }
@@ -174,12 +192,13 @@ namespace FirstProjectNET.Controllers
             {
                 try
                 {
-                    db.Update(booking);
-                    db.SaveChanges();
+                    var booking = _mapper.Map<Booking>(model);
+                    _db.Update(booking);
+                    _db.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingExists(booking.BookingID))
+                    if (!BookingExists(model.BookingID))
                     {
                         return NotFound();
                     }
@@ -190,12 +209,13 @@ namespace FirstProjectNET.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(booking);
+            return View(model);
         }
 
         private bool BookingExists(string id)
         {
-            return (db.Bookings?.Any(x => x.BookingID == id)).GetValueOrDefault();
+            
+            return (_db.Bookings?.Any(x => x.BookingID == id)).GetValueOrDefault();
         }
         // Delete
         [Route("Delete")]
@@ -209,11 +229,11 @@ namespace FirstProjectNET.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            if (id == null || db.Bookings == null)
+            if (id == null || _db.Bookings == null)
             {
                 return NotFound();
             }
-            var booking = db.Bookings.Include(b => b.RentForm).FirstOrDefault(x => x.BookingID == id);
+            var booking = _db.Bookings.Include(b => b.RentForm).FirstOrDefault(x => x.BookingID == id);
 
             if (booking == null)
             {
@@ -223,6 +243,7 @@ namespace FirstProjectNET.Controllers
             //{
             //    return Content("Can not delete this rooms");
             //}
+            
             return View(booking);
 
         }
@@ -233,16 +254,16 @@ namespace FirstProjectNET.Controllers
         {
             try
             {
-                if (db.Bookings == null)
+                if (_db.Bookings == null)
                 {
                     return Problem("Entity set 'Bookings' is null");
                 }
-                var booking = db.Bookings?.Find(id);
+                var booking = _db.Bookings?.Find(id);
                 if (booking != null)
                 {
-                    db.Bookings.Remove(booking);
+                    _db.Bookings.Remove(booking);
                 }
-                db.SaveChanges();
+                _db.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)

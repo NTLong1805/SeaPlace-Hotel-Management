@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FirstProjectNET.Models.Category>
+﻿@model IEnumerable<FirstProjectNET.Models.ViewModel.AdminCategoryViewModel>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
@@ -122,5 +122,12 @@
             </td>
         </tr>
     </table>
-    <a asp-controller="Categories" asp-action="Create" class="btn btn-primary">Create New Category</a>
+    @if(Context.Session.GetString("Type") == "Admin")
+    {
+        <a asp-controller="Categories" asp-action="Create" class="btn btn-primary">Create New Category</a>
+    }
+    else
+    {
+        <a asp-controller="Categories" asp-action="Create" class="btn btn-primary" disable>Create New Category</a>
+    }
 </div>
